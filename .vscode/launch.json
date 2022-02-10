@@ -18,6 +18,23 @@
                 "--num_ims_2_save=3",
             ],
         },
+        {
+            "name": "train",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--is_train=True",
+                "--ckpt_dir","/home/yuval-bahat/PycharmProjects/Deep_MRI_Unet/models/training_default",
+                "--data_set","/media/yuval-bahat/B0BEE15CBEE11C1A/Datasets/MRI/data_set.mat",
+                "--logs_step=100",
+                "--disp_step=20",
+                // "--result_name=results/models/pretrained",
+                // "--num_ims_2_save=3",
+                "--batch_size=16",
+            ],
+        },
 
     ]
 }

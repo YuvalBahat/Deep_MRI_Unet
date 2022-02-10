@@ -96,13 +96,18 @@ class Unet(object):
 
         self.saver = tf.train.Saver()
 
-    def train(self):
+    def train(self,im_save_freq=None):
         self.sess.run(tf.global_variables_initializer())
         feed_dict_fixed = {self.X: self.trX[0:self.batch_size],
                            self.Y: self.trY[0:self.batch_size]}
+        latest_ckpt = tf.train.latest_checkpoint(self.ckpt_dir + '/')
+        init_step_num = 0
+        if latest_ckpt is not None:
+            self.saver.restore(self.sess, latest_ckpt)
+            init_step_num = int(latest_ckpt.split("-")[-1])
 
         ground_time = time.time()
-        for i in xrange(self.epoch_num):
+        for i in xrange(init_step_num,self.epoch_num):
             randpermlist = np.random.permutation(self.num_of_data)
             batch = zip(xrange(0, self.num_of_data, self.batch_size),
                         xrange(self.batch_size, self.num_of_data, self.batch_size))
@@ -124,7 +129,11 @@ class Unet(object):
             summary_str = self.sess.run(
                 self.summary, feed_dict=feed_dict_fixed)
             self.writer.add_summary(summary_str, global_step=i + 1)
-
+            # if im_save_freq is not None and (i+1)%im_save_freq==0:
+            #     output = self.sess.run([self.image_mb],feed_dict={self.X:np.expand_dims(self.trX[randpermlist[start]],0)})
+            #     tf.summary.image("input", self.trX[randpermlist[start]])
+            #     tf.summary.image("output", output[0].squeeze())
+            #     tf.summary.image("GT",self.trY[randpermlist[start]])
             if (i + 1) % self.logs_step == 0:
                 self.saver.save(self.sess, self.ckpt_dir +
                                 '/model.ckpt', global_step=i + 1)
@@ -167,8 +176,8 @@ class Unet(object):
                     mb_start = mb_per_gpu * d
                     mb_end = mb_per_gpu * (d + 1)
                     label_mb = self.Y[mb_start:mb_end]
-                    image_mb = self.inference(input_=self.X[mb_start:mb_end])
-                    loss = tf.nn.l2_loss(label_mb - image_mb) / mb_per_gpu
+                    self.image_mb = self.inference(input_=self.X[mb_start:mb_end])
+                    loss = tf.nn.l2_loss(label_mb - self.image_mb) / mb_per_gpu
 
                     # Reuse variables for the next tower.
                     tf.get_variable_scope().reuse_variables()

@@ -1,4 +1,4 @@
 logs/model/events.*
-pretrained
+models/*
 __pycache__
-results
+results/*

@@ -23,6 +23,8 @@ flags.DEFINE_string('ckpt_dir', None,
                     """ Directory name to save the checkpoints.""")
 flags.DEFINE_integer('logs_step', None,
                      """ logs_step. If none, epoch_num/5. """)
+flags.DEFINE_integer('disp_step', None,
+                     """How often to save output images to tensorboard. """)
 flags.DEFINE_integer('restore_step', None,
                      """ Index of restore ckpt file.""")
 
@@ -61,7 +63,7 @@ def main(_):
     # show_all_variables()
 
     if FLAGS.is_train:
-        unet.train()
+        unet.train(im_save_freq=FLAGS.disp_step)
     else:
         unet.test(save_images=FLAGS.num_ims_2_save)
 

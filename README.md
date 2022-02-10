@@ -2,9 +2,10 @@
 ![alt text](https://github.com/hpkim0512/Unet/blob/master/web/img/architecture.png)
 
 # Prerequisites
-- Python 3.5
-- [Tensorflow 1.3](https://www.tensorflow.org/)
+- Python
+- [Tensorflow-gpu](https://anaconda.org/anaconda/tensorflow-gpu)
 - [h5py](www.h5py.org/)
+- [imageio]
 
 # Usage
 To train a model with dataset Version 7.3 MAT-file 'data_set.mat' ([Download](https://drive.google.com/file/d/19Q3XUzfKqIquNxCFGAM2uiKzADt_8gH_/view?usp=sharing)):
