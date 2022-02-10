@@ -5,7 +5,7 @@
 - Python
 - [Tensorflow-gpu](https://anaconda.org/anaconda/tensorflow-gpu)
 - [h5py](www.h5py.org/)
-- [imageio]
+- [imageio](https://anaconda.org/conda-forge/imageio)
 
 # Usage
 To train a model with dataset Version 7.3 MAT-file 'data_set.mat' ([Download](https://drive.google.com/file/d/19Q3XUzfKqIquNxCFGAM2uiKzADt_8gH_/view?usp=sharing)):
