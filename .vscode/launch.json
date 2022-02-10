@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--is_train=False",
+                "--ckpt_dir","/home/yuval-bahat/PycharmProjects/Deep_MRI_Unet/pretrained",
+                "--test_set","/media/yuval-bahat/B0BEE15CBEE11C1A/Datasets/MRI/test_set.mat",
+                "--result_name=results/pretrained",
+                "--num_ims_2_save=3",
+            ],
+        },
+
+    ]
+}

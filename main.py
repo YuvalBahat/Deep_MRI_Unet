@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 from model import Unet
 from utils import *
@@ -35,6 +35,8 @@ flags.DEFINE_integer('batch_size', 32,
 
 flags.DEFINE_integer('num_gpu', 1,
                      """How many GPUs.""")
+flags.DEFINE_integer('num_ims_2_save', 0,
+                     """How many test images to save as images.""")
 flags.DEFINE_boolean('is_train', True,
                      """ True for training, False for testing.""")
 flags.DEFINE_boolean('w_bn', False,
@@ -56,12 +58,12 @@ def main(_):
                 hidden_num=FLAGS.hidden_num, epoch_num=FLAGS.epoch_num, batch_size=FLAGS.batch_size,
                 num_gpu=FLAGS.num_gpu, is_train=FLAGS.is_train, w_bn=FLAGS.w_bn)
 
-    show_all_variables()
+    # show_all_variables()
 
     if FLAGS.is_train:
         unet.train()
     else:
-        unet.test()
+        unet.test(save_images=FLAGS.num_ims_2_save)
 
 
 if __name__ == '__main__':

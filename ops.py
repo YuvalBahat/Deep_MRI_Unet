@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 
 def _variable_on_cpu(name, shape, initializer=tf.truncated_normal_initializer(stddev=0.01)):

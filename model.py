@@ -2,13 +2,14 @@ from __future__ import division
 from __future__ import print_function
 
 import time
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 
 import scipy.io
 
 from six.moves import xrange
-
+import imageio
 from utils import read_mat
 from ops import *
 
@@ -33,7 +34,8 @@ class Unet(object):
 
         if ckpt_dir is None:
             ckpt_dir = data_set
-        self.ckpt_dir = './logs/' + ckpt_dir
+        # self.ckpt_dir = './logs/' + ckpt_dir
+        self.ckpt_dir = ckpt_dir
         if logs_step is None:
             self.logs_step = int(epoch_num / 5)
         else:
@@ -67,11 +69,12 @@ class Unet(object):
     def build_model(self):
         self.X = tf.placeholder("float", [None, self.width, self.height])
         if self.is_train:
-            self.trX, self.trY = read_mat(
-                './data/' + self.data_set + '.mat', True)
+            # self.trX, self.trY = read_mat('./data/' + self.data_set + '.mat', True)
+            self.trX, self.trY = read_mat(self.data_set, True)
             self.Y = tf.placeholder("float", [None, self.width, self.height])
         else:
-            self.trX = read_mat('./data/' + self.test_set + '.mat', False)
+            self.trX = read_mat(self.test_set, False)
+            # self.trX = read_mat('./data/' + self.test_set + '.mat', False)
         self.num_of_data = len(self.trX)
 
         if self.is_train:
@@ -126,7 +129,7 @@ class Unet(object):
                 self.saver.save(self.sess, self.ckpt_dir +
                                 '/model.ckpt', global_step=i + 1)
 
-    def test(self):
+    def test(self,save_images=0):
         if self.restore_step is None:
             self.saver.restore(
                 self.sess, tf.train.latest_checkpoint(self.ckpt_dir + '/'))
@@ -135,7 +138,7 @@ class Unet(object):
                                '/model.ckpt-' + str(self.restore_step))
 
         batch = zip(xrange(0, self.num_of_data, self.batch_size),
-                    xrange(self.batch_size, self.num_of_data, self.batch_size)
+                    list(xrange(self.batch_size, self.num_of_data, self.batch_size))
                     + [self.num_of_data])
         out_ = []
         for start, end in batch:
@@ -143,9 +146,12 @@ class Unet(object):
                                     self.X: self.trX[start:end]})
             out_.append(tmp_out)
         Out_ = self.sess.run(tf.concat(axis=0, values=out_))
-
-        scipy.io.savemat(self.ckpt_dir + '/' + self.result_name +
-                         '-' + str(self.restore_step) + '.mat', {'output': Out_})
+        # result_path = self.ckpt_dir + '/' + self.result_name + '-' + str(self.restore_step) + '.mat'
+        result_path = self.result_name + '.mat'
+        scipy.io.savemat(result_path, {'output': Out_})
+        for im_num in range(save_images):
+            imageio.imwrite(result_path.replace(".mat","_%d_in.png"%(im_num)),self.trX[im_num])
+            imageio.imwrite(result_path.replace(".mat","_%d_out.png"%(im_num)),Out_[im_num])
         print(Out_.shape)
 
     def loss_and_grad(self):
